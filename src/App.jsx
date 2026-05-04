@@ -1061,7 +1061,7 @@ function CoachTab({ state, dispatch }) {
     try {
       const history = [...state.chatHistory, userMsg];
       const apiMessages = history.map((m, i) => i === 0 ? { role: "user", content: buildContext() + "\n\n" + m.content } : { role: m.role, content: m.content });
-      const res = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, system: COACH_SYSTEM, messages: apiMessages }) });
+      const res = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", headers: { "Content-Type": "application/json", "x-api-key": import.meta.env.VITE_ANTHROPIC_KEY, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" }, body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, system: COACH_SYSTEM, messages: apiMessages }) });
       const data = await res.json();
       dispatch({ type: "ADD_CHAT", message: { role: "assistant", content: data.content?.find(b => b.type === "text")?.text || "Couldn't respond — try again." } });
     } catch { dispatch({ type: "ADD_CHAT", message: { role: "assistant", content: "Network error — check your connection." } }); }
